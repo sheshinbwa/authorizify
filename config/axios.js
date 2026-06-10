@@ -1,8 +1,9 @@
 
 import axios from "axios"
+import {VITE_BASEURL} from "./env.js";
 
 const api = axios.create({
-    baseURL:"http://localhost:4000",
+    baseURL:VITE_BASEURL,
     withCredentials: true
 })
 

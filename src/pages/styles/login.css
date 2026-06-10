@@ -28,3 +28,37 @@ button {
 button:hover {
     background-color: #0056b3;
 }
+
+
+.show-wrap{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.show-icon{
+    margin: 4px;
+}
+
+.register-link-wrap{
+    text-align: center;
+}
+
+.login-hd{
+    text-align: center;
+    text-transform: capitalize;
+}
+
+.forgot-text{
+    text-align: right;
+}
+
+
+
+.success{
+    color: red;
+}
+
+.error{
+    color: green;
+}

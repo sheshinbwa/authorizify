@@ -28,3 +28,22 @@ button {
 button:hover {
     background-color: #218838;
 }
+
+
+.reg-hd{
+    text-align: center;
+    text-transform: capitalize;
+}
+
+.account-text{
+    text-align: center;
+}
+
+
+.error{
+    color: red;
+}
+
+.success{
+    color: green;
+}

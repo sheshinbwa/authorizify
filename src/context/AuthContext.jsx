@@ -1,5 +1,5 @@
-import React, { createContext, useState, useContext } from 'react';
-import api from '../config/axios';
+import  { createContext, useState, useContext } from 'react';
+import api from '../../config/axios.js';
 
 const AuthContext = createContext(null);
 
@@ -10,8 +10,9 @@ export const AuthProvider = ({ children }) => {
     const login = async (credentials) => {
         setLoading(true);
         try {
-            await api.post('/login', credentials);
-            setUser({ email: credentials.email });
+            const login_req = await api.post(`/login`, credentials);
+            setUser(login_req.data.email)
+            return login_req.data
         } catch (error) {
             console.error(error);
         } finally {
@@ -22,7 +23,9 @@ export const AuthProvider = ({ children }) => {
     const register = async (userData) => {
         setLoading(true);
         try {
-            await api.post('/register', userData);
+            const reg_req = await api.post(`/register`, userData);
+            setUser(reg_req.data.email)
+            return reg_req.data
         } catch (error) {
             console.error(error);
         } finally {
@@ -33,7 +36,8 @@ export const AuthProvider = ({ children }) => {
     const forgotPassword = async (email) => {
         setLoading(true);
         try {
-            await api.post('/forgot-password', { email });
+            const email_req = await api.post(`/password-recovery/email/sender`, { email });
+            return email_req.data
         } catch (error) {
             console.error(error);
         } finally {
@@ -41,10 +45,22 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const setNewPassword = async (verificationId, password) => {
+    const setNewPasswordVerification = async (verificationId) => {
         setLoading(true);
         try {
-            await api.post(`/set-new-password/${verificationId}`, { password });
+            const verification_req=await api.post(`/account/password-recovery/verification/${verificationId}`);
+            return verification_req.data
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    };
+    const setNewPassword = async (userId,password) => {
+        setLoading(true);
+        try {
+            const new_password_req =await api.post(`/set-new-password`,{userId,password});
+            return new_password_req.data
         } catch (error) {
             console.error(error);
         } finally {
@@ -55,7 +71,8 @@ export const AuthProvider = ({ children }) => {
     const verifyUser = async (verificationId) => {
         setLoading(true);
         try {
-            await api.get(`/verify-user/${verificationId}`);
+            const verify_req =await api.post(`/verify-user/${verificationId}`);
+            return verify_req.data
         } catch (error) {
             console.error(error);
         } finally {
@@ -68,6 +85,7 @@ export const AuthProvider = ({ children }) => {
         try {
             await api.post('/logout');
             setUser(null);
+
         } catch (error) {
             console.error(error);
         } finally {
@@ -76,10 +94,11 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, login, register, forgotPassword, setNewPassword, verifyUser, logout, loading }}>
+        <AuthContext.Provider value={{ user, login, register, forgotPassword, setNewPassword,setNewPasswordVerification, verifyUser, logout, loading }}>
             {children}
         </AuthContext.Provider>
     );
 };
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => useContext(AuthContext);

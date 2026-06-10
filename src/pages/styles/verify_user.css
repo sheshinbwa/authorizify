@@ -8,3 +8,12 @@
     font-family: Arial, sans-serif;
     text-align: center;
 }
+
+
+.success{
+    color:green
+}
+
+.error{
+    color: red;
+}
