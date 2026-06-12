@@ -1,4 +1,4 @@
-import  { createContext, useState, useContext } from 'react';
+import  { createContext, useState,useContext } from 'react';
 import api from '../../config/axios.js';
 
 const AuthContext = createContext(null);
@@ -48,7 +48,8 @@ export const AuthProvider = ({ children }) => {
     const setNewPasswordVerification = async (verificationId) => {
         setLoading(true);
         try {
-            const verification_req=await api.post(`/account/password-recovery/verification/${verificationId}`);
+            const verification_req=await api.post(`/set-new-password/${verificationId}`);
+            console.log("new password verification data", verification_req.data)
             return verification_req.data
         } catch (error) {
             console.error(error);
@@ -56,11 +57,12 @@ export const AuthProvider = ({ children }) => {
             setLoading(false);
         }
     };
+
     const setNewPassword = async (userId,password) => {
         setLoading(true);
         try {
             const new_password_req =await api.post(`/set-new-password`,{userId,password});
-            return new_password_req.data
+            return new_password_req
         } catch (error) {
             console.error(error);
         } finally {
@@ -93,9 +95,23 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+      
+    const persistUserSession = async () => {
+            setLoading(true)
+            try{
+                const session = await api.post('/persist-user-session',{})
+                setUser(session.data.email)
+                
+            }catch(error){
+                console.log(error)
+            }finally{
+                setLoading(false)
+            }
+        } 
+
     return (
-        <AuthContext.Provider value={{ user, login, register, forgotPassword, setNewPassword,setNewPasswordVerification, verifyUser, logout, loading }}>
-            {children}
+        <AuthContext.Provider value={{ user,persistUserSession, login, register, forgotPassword, setNewPassword,setNewPasswordVerification, verifyUser, logout, loading }}>
+            { children}
         </AuthContext.Provider>
     );
 };

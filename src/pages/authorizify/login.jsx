@@ -3,7 +3,7 @@ import { FaEye, FaEyeSlash } from "react-icons/fa"
 import "../styles/login.css"
 import { useAuth } from "../../context/AuthContext"
 import Loader from "../../components/Loader"
-import {Link} from "react-router";
+import {Link, useNavigate} from "react-router";
 import { NotificationCard } from "../../components/notification_card"
 
 export default function Login() {
@@ -15,7 +15,7 @@ export default function Login() {
     const [notificationMessageType,setNotificationMessageType] = useState(null)
 
     const { login, loading } = useAuth()
-
+    const navigate = useNavigate()
     const loginUser = async (e) => {
         e.preventDefault()
        const login_req = await login({ email, password })
@@ -27,18 +27,18 @@ export default function Login() {
         setShowNotification(true)
         setNotificationMessage(message)
         setNotificationMessageType("error")
-    }
-    if(statusMessage === "INCORRECT PASSWORD"){
+    }else if(statusMessage === "INCORRECT PASSWORD"){
            setShowNotification(true)
            setNotificationMessage(message)
            setNotificationMessageType("error")
            
-        }
-        if(statusMessage === "LOGIN SUCCESSFUL "){
+        }else{
            setShowNotification(true)
            setNotificationMessage(message)
            setNotificationMessageType("success")
-
+           setTimeout(()=>{
+            navigate("/dashboard")
+           },2000)
        }
 
     }

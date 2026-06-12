@@ -25,7 +25,7 @@ const ForgotPassword = () => {
             setShowNotification(true)
             setNotificationMessage(message)
             setNotificationMessageType("success")
-
+            
         }
     };
 

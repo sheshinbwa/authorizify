@@ -12,48 +12,39 @@ const NewPassword = () => {
     const [confirmPassword,setConfirmPassword] = useState('')
     const cPassword = useRef()
     const [userId,setUserId] = useState(null)
-    const [statusMessage,setStatusMessage] = useState(null)
+    
     const [showNotification,setShowNotification] = useState(false)
     const [notificationMessage,setNotificationMessage] = useState(null)
     const [notificationMessageType,setNotificationMessageType] = useState(null)
-    const [verify,setVerify] = useState(false)
     const { verificationId } = useParams();
     const navigate = useNavigate()
     const {loading,setNewPasswordVerification,setNewPassword} = useAuth()
- 
 
     useEffect(()=>{
         const verifyPasswordRecoveryLink = async () => {
-            if(!verify){
+            
                 const verify_req = await setNewPasswordVerification(verificationId)
-                const {message,statusMessage,id} = verify_req
+                const {statusMessage,id} = verify_req
 
                 if(statusMessage === "VALID LINK"){
-                    setVerify(true)
                     setUserId(id)
-                    setNotificationMessage(message)
-                    setNotificationMessageType("success")
-                    setShowNotification(true)
                 }
+                
                 if(statusMessage === "INVALID LINK"){
-                    setVerify(true)
-                    setStatusMessage("error")
-                    setNotificationMessage(message)
-                    setNotificationMessageType("error")
-                    setShowNotification(true)
+                    navigate("/verification-error")
                 }
+                
                 if(statusMessage === "EXPIRED LINK"){
-                    setVerify(true)
-                    setStatusMessage("error")
-                    setNotificationMessage(message)
-                    setNotificationMessageType("error")
-                    setShowNotification(true)
+                    navigate("/verification-error")
+                }
+
+                if(statusMessage === "USED LINK"){
+                    navigate("/verification-error")
                 }
                 
             }
-        }
         verifyPasswordRecoveryLink()
-    })
+    },[verificationId,navigate,setNewPasswordVerification])
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -64,28 +55,28 @@ const NewPassword = () => {
             setShowNotification(true)
         }else{
             const new_password_req = await setNewPassword(userId,password)
-            const {statusMessage,message} = new_password_req
-
-            if (statusMessage && statusMessage === "PASSWORD") {
-                setNotificationMessage(message)
+            
+            if (new_password_req.status === 200) {
+                setTimeout(()=>navigate("/login"),1500)
+            }else{
+                setNotificationMessage('fail to set new password')
                 setNotificationMessageType("error")
                 setShowNotification(true)
-                setTimeout(()=>{
-                    navigate("/login")
-                },2500)
             }
         }
         
     };
 
     if (loading) return <Loader />;
-    if (statusMessage === "error") return <NotificationCard type={notificationMessageType} message={notificationMessage} />;
+    
     
     return (
         <div className="new-password-wrap">
             {
                 showNotification && <NotificationCard type={notificationMessageType} message={notificationMessage} />
             }
+            {notificationMessage === "success" && 
+            <>
             <h4 className={"new-password-hd"}>enter your new password</h4>
             <form onSubmit={handleSubmit}>
                 <input type="password" name="password" placeholder="New Password" onChange={(e) => setPassword(e.target.value)} required />
@@ -97,6 +88,8 @@ const NewPassword = () => {
                 }} required />
                 <button type="submit" ref={cPassword} disabled={true}>Set New Password</button>
             </form>
+            </>
+            }
         </div>
     );
 };

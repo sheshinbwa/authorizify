@@ -1,11 +1,17 @@
 import { useAuth } from "../../context/AuthContext"
 import Loader from "../../components/Loader"
 import "../styles/dashboard.css"
-import { Navigate, useNavigate } from "react-router"
+import {useNavigate } from "react-router"
+import { useEffect } from "react"
 
 export default function Dashboard() {
-    const { logout, loading, user} = useAuth()
+    const { logout, loading, user,persistUserSession} = useAuth()
     const navigate = useNavigate()
+
+
+    useEffect(()=>{
+        persistUserSession()
+    },[persistUserSession])
 
 
     const handleLogout = async () => {
@@ -18,6 +24,7 @@ export default function Dashboard() {
 
     if (loading) return <Loader />
 
+
     return (
         
         user?
@@ -26,7 +33,6 @@ export default function Dashboard() {
             <p>Welcome to your dashboard.</p>
             <button className="logout-btn" onClick={handleLogout}>Logout</button>
         </div>):
-        <Navigate to={"/login"}/>
-    
+        navigate("/login")
     )
 }

@@ -8,6 +8,7 @@ import Dashboard from "./pages/authorizify/dashboard.jsx";
 import VerifyUser from "./pages/authorizify/verify_user.jsx";
 import NotFound from "./pages/authorizify/not_found.jsx";
 import { AuthProvider } from './context/AuthContext';
+import { VerificationError } from './pages/authorizify/verification_error.jsx';
 
 function App() {
   return (
@@ -21,7 +22,8 @@ function App() {
                 <Route path="/set-new-password/:verificationId" element={<NewPassword />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/verify-user/:verificationId" element={<VerifyUser />} />
-                <Route path="*" element={<NotFound />} />
+                <Route path="/verification-error" element={<VerificationError />} />
+                <Route path="*" element={<NotFound/>} />
             </Routes>
         </BrowserRouter>
     </AuthProvider>
